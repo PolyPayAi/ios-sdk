@@ -21,7 +21,6 @@ final class PolyPayCheckoutStore: ObservableObject {
     private let tradeID: String
     private let onOutcome: (PolyPayCheckoutOutcome) -> Void
     private var pollingTask: Task<Void, Never>?
-    private var emittedDetection = false
 
     /// Creates a store from an already validated SDK configuration.
     init(
@@ -96,24 +95,26 @@ final class PolyPayCheckoutStore: ObservableObject {
 
     /// Emits a close event that never asserts the order is paid.
     func close() {
+        switch phase {
+        case .expired:
+            onOutcome(.expired(tradeID: tradeID))
+            return
+        case .cancelled:
+            onOutcome(.cancelled(tradeID: tradeID))
+            return
+        case let .error(code):
+            onOutcome(.error(code: code))
+            return
+        default:
+            break
+        }
         let detected = currentStatus.map { [2, 6, 7].contains($0) } ?? false
         onOutcome(detected ? .paymentDetected(tradeID: tradeID) : .closed(tradeID: tradeID))
-    }
-
-    /// Emits the current terminal result for the host to dismiss the SDK.
-    func finishTerminal() {
-        switch phase {
-        case .expired: onOutcome(.expired(tradeID: tradeID))
-        case .cancelled: onOutcome(.cancelled(tradeID: tradeID))
-        case let .error(code): onOutcome(.error(code: code))
-        default: close()
-        }
     }
 
     /// Shows a payment page and starts lifecycle-bound status observation.
     private func showPayment(_ order: CheckoutOrder) {
         phase = .paying(order: order)
-        emitDetectionIfNeeded(status: order.status)
         pollingTask?.cancel()
         guard ![2, 3, 4, 7].contains(order.status) else { return }
         pollingTask = Task { [weak self] in
@@ -142,7 +143,6 @@ final class PolyPayCheckoutStore: ObservableObject {
                             merchantName: current.merchantName
                         )
                         phase = .paying(order: updated)
-                        emitDetectionIfNeeded(status: status.status)
                         if [2, 7].contains(status.status) { return }
                     }
                 } catch {
@@ -150,13 +150,6 @@ final class PolyPayCheckoutStore: ObservableObject {
                 }
             }
         }
-    }
-
-    /// Emits one detection event while preserving server-side fulfillment authority.
-    private func emitDetectionIfNeeded(status: Int) {
-        guard [2, 6, 7].contains(status), !emittedDetection else { return }
-        emittedDetection = true
-        onOutcome(.paymentDetected(tradeID: tradeID))
     }
 
     /// Returns the status currently visible on a payment page.
