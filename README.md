@@ -45,5 +45,6 @@ The SDK displays currencies, networks, fee estimates, exact amount, address, add
 ## Test
 
 ```bash
-swift test
+device_id=$(xcrun simctl list devices available -j | jq -r '[.devices[][] | select(.name | startswith("iPhone"))][0].udid')
+xcodebuild -scheme PolyPayCheckout -destination "platform=iOS Simulator,id=$device_id" test CODE_SIGNING_ALLOWED=NO
 ```

@@ -15,9 +15,11 @@ jobs:
     steps:
       - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
       - name: Verify package
+        shell: bash
         run: |
-          swift test
-          xcodebuild -scheme PolyPayCheckout -destination 'generic/platform=iOS Simulator' build CODE_SIGNING_ALLOWED=NO
+          device_id=$(xcrun simctl list devices available -j | jq -r '[.devices[][] | select(.name | startswith("iPhone"))][0].udid')
+          test -n "$device_id"
+          xcodebuild -scheme PolyPayCheckout -destination "platform=iOS Simulator,id=$device_id" test CODE_SIGNING_ALLOWED=NO
       - name: Create source package
         run: |
           git archive --format=zip --prefix=PolyPayCheckout-${GITHUB_REF_NAME}/ -o PolyPayCheckout-${GITHUB_REF_NAME}.zip HEAD
