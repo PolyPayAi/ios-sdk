@@ -1,4 +1,5 @@
 import SwiftUI
+import UIKit
 
 /// Native SwiftUI checkout containing payment-method selection and payment pages.
 @MainActor
@@ -18,7 +19,7 @@ public struct PolyPayCheckoutView: View {
 
     /// Renders the current state-machine page using native SwiftUI controls.
     public var body: some View {
-        NavigationStack {
+        NavigationView {
             Group {
                 switch store.phase {
                 case .loading:
@@ -49,11 +50,12 @@ public struct PolyPayCheckoutView: View {
             .navigationTitle(localized("title"))
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
-                ToolbarItem(placement: .topBarTrailing) {
+                ToolbarItem(placement: .navigationBarTrailing) {
                     Button(localized("close"), action: store.close)
                 }
             }
         }
+        .navigationViewStyle(.stack)
         .task { await store.load() }
     }
 }
