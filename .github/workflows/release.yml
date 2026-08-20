@@ -1,0 +1,33 @@
+name: Release
+
+on:
+  push:
+    tags: ['v*.*.*']
+
+permissions:
+  contents: write
+  id-token: write
+  attestations: write
+
+jobs:
+  release:
+    runs-on: macos-15
+    steps:
+      - uses: actions/checkout@v4
+      - name: Verify package
+        run: |
+          swift test
+          xcodebuild -scheme PolyPayCheckout -destination 'generic/platform=iOS Simulator' build CODE_SIGNING_ALLOWED=NO
+      - name: Create source package
+        run: |
+          git archive --format=zip --prefix=PolyPayCheckout-${GITHUB_REF_NAME}/ -o PolyPayCheckout-${GITHUB_REF_NAME}.zip HEAD
+          shasum -a 256 PolyPayCheckout-${GITHUB_REF_NAME}.zip > PolyPayCheckout-${GITHUB_REF_NAME}.zip.sha256
+      - uses: actions/attest-build-provenance@v2
+        with:
+          subject-path: PolyPayCheckout-${{ github.ref_name }}.zip
+      - uses: softprops/action-gh-release@v2
+        with:
+          generate_release_notes: true
+          files: |
+            PolyPayCheckout-${{ github.ref_name }}.zip
+            PolyPayCheckout-${{ github.ref_name }}.zip.sha256
