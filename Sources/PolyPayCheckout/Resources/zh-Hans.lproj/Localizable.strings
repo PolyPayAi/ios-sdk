@@ -20,3 +20,10 @@
 "close" = "关闭";
 "copied" = "已复制";
 "security_note" = "订单履约状态最终以商户服务端确认结果为准。";
+"requests_payment" = "向你发起收款";
+"merchant_order_id" = "商户订单号";
+"selected_method" = "已选支付方式";
+"select_currency" = "选择支付币种";
+"select_network" = "选择转账网络";
+"recommended" = "推荐";
+"pay_with_method" = "使用 %@ · %@%@ 支付";

@@ -140,7 +140,8 @@ final class PolyPayCheckoutStore: ObservableObject {
                             address: current.address,
                             status: status.status,
                             expirationTime: current.expirationTime,
-                            merchantName: current.merchantName
+                            merchantName: current.merchantName,
+                            merchantAvatar: current.merchantAvatar
                         )
                         phase = .paying(order: updated)
                         if [2, 7].contains(status.status) { return }

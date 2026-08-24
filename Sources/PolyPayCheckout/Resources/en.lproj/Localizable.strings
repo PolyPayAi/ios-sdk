@@ -20,3 +20,10 @@
 "close" = "Close";
 "copied" = "Copied";
 "security_note" = "Final fulfillment must be confirmed by the merchant server.";
+"requests_payment" = "requests your payment";
+"merchant_order_id" = "Merchant Order ID";
+"selected_method" = "Selected payment method";
+"select_currency" = "Choose payment currency";
+"select_network" = "Choose transfer network";
+"recommended" = "Recommended";
+"pay_with_method" = "Pay with %@ · %@%@";

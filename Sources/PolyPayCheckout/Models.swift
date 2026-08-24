@@ -40,6 +40,7 @@ struct CheckoutOrder: Decodable, Equatable, Sendable {
     let status: Int
     let expirationTime: Int64
     let merchantName: String?
+    let merchantAvatar: String?
 
     enum CodingKeys: String, CodingKey {
         case currency, network, amount, address, status
@@ -49,6 +50,7 @@ struct CheckoutOrder: Decodable, Equatable, Sendable {
         case displayAmount = "display_amount"
         case expirationTime = "expiration_time"
         case merchantName = "merchant_name"
+        case merchantAvatar = "merchant_avatar"
     }
 
     /// Returns the server-normalized exact amount for display and copying.
