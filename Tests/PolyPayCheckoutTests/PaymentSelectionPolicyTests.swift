@@ -27,6 +27,15 @@ final class PaymentSelectionPolicyTests: XCTestCase {
         )
     }
 
+    /// Prefers the native GRAM currency while preserving the TON network name.
+    func testGramNativeCurrency() {
+        let methods = [method("TON", ["CUSTOM", "GRAM"])]
+        XCTAssertEqual(
+            PaymentSelectionPolicy.preferred(methods),
+            PaymentSelection(currency: "GRAM", network: "TON")
+        )
+    }
+
     /// Creates a compact payment-method test fixture.
     private func method(
         _ network: String,

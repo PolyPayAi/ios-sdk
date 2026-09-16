@@ -121,7 +121,7 @@ enum PaymentSelectionPolicy {
 
     /// Returns unique currencies in a stable checkout display order.
     static func currencies(_ methods: [PaymentMethodGroup]) -> [String] {
-        let order = ["USDT", "USDC", "BUSD", "DAI", "ETH", "BNB", "TRX", "TON"]
+        let order = ["USDT", "USDC", "BUSD", "DAI", "ETH", "BNB", "TRX", "GRAM"]
         return Array(Set(methods.flatMap(\.currencies))).sorted {
             let left = order.firstIndex(of: $0) ?? Int.max
             let right = order.firstIndex(of: $1) ?? Int.max
